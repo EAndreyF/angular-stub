@@ -54,8 +54,6 @@ var swallowError = function (error) {
   this.emit('end');
 };
 
-gulp.task('default', ['serve']);
-
 // Clean dest folder
 gulp.task('clean', function () {
   return del(path.join(dest, '**/*'));
@@ -90,7 +88,6 @@ gulp.task('css compile', function () {
 gulp.task('inject files', ['css compile', 'create template cache'], function () {
   // change this rule, for production version include min.css
   gulp.src(path.join(dest, 'html/index.html'))
-    .pipe(gulp.dest(dest))
     .pipe(inject(
       gulp.src([path.join(dest, 'css', '**/*.css')], {read: false}),
       {
@@ -143,9 +140,9 @@ gulp.task('copy js', function () {
 gulp.task('build', ['copy img', 'copy fonts', 'copy js', 'inject files']);
 
 // local server
-gulp.task('serve', ['build', 'watch'], function () {
+gulp.task('serve', ['build'], function () {
   connect.server({
-    root: '.tmp',
+    root: dest,
     port: 8003,
     livereload: false
   });
@@ -153,7 +150,7 @@ gulp.task('serve', ['build', 'watch'], function () {
   console.log('Server listening on http://localhost:8003');
 });
 
-gulp.task('watch', function () {
+gulp.task('watch', ['build'], function () {
   var w = path.joinArray(src, '**/*');
   w.push('./bower.json');
   watch(w, function () {
@@ -161,3 +158,6 @@ gulp.task('watch', function () {
     gulp.run('build');
   });
 });
+
+gulp.task('default', ['serve', 'watch']);
+

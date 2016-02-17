@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "gulp",
-    "prod": "gulp build && node serve"
+    "dev": "./node_modules/.bin/gulp clean && ./node_modules/.bin/gulp",
+    "prod": "node serve"
   },
   "author": "Andrey Evstropov",
   "dependencies": {
@@ -22,5 +22,8 @@
     "gulp-slim": "^0.3.0",
     "gulp-stylus": "^2.1.0",
     "gulp-watch": "^4.3.5"
+  },
+  "engines": {
+    "node": ">=0.10.3 <5.0"
   }
 }
