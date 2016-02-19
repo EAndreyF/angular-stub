@@ -22,7 +22,11 @@ path._joinArrayToArray = function (arr, arr2) {
   }
   arr.forEach(function (el) {
     arr2.forEach(function (el2) {
-      res.push(path.join(el, el2));
+      if (el2[0] === '!') {
+        res.push('!' + path.join(el, el2.slice(1)));
+      } else {
+        res.push(path.join(el, el2));
+      }
     });
   });
   return res;
@@ -42,7 +46,7 @@ var dest = './.tmp';
 
 var paths = {
   css: ['./app.styl'],
-  js: ['./**/*.js'],
+  js: ['./**/*.js', '!./**/*.test.js'],
   templates: ['./**/*.slim'], // need to installed slim
   vendors: ['./vendors/*'],
   img: ['./**/*.{png,jpg,gif,svg}'],
