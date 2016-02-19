@@ -1,10 +1,10 @@
 {
-  "name": "teletext2",
+  "name": "angular-stub",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "dev": "./node_modules/.bin/gulp clean && ./node_modules/.bin/gulp",
-    "prod": "node serve",
+    "prod": "./node_modules/.bin/gulp build && node serve",
     "test": "./node_modules/.bin/karma start"
   },
   "author": "Andrey Evstropov",

@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- '4.0'
+script: npm test
+before_script:
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+deploy:
+  provider: heroku
+  api_key:
+    secure: MogBBoZ3vIj2A4HqYzOYn+Hmrv126kGqI2FrFYktGNip84B82/DtH/icn4GGHDo7K4Zn3HqD2VbrjD2f2RJnD8t39rnO69fWeKMiOH2WM/b8ZP1x7tiuL3nvjqEPOmDOWdaCGNQtO60MOmD2PKESLDxcm8GtCqbiu26RpUrLAy3IFQ0xRefViK10UUyy4pztZfPNwAsJeIKe4iv/VfFoNAfZCEE2+xWKwr9YeLrhIDTkZ39aDdZxjtdaWnmaAtLr53wBTQHJ4NHSLDaa34ku8nNArs6mtHjcKJn7HYdiR1zrLq6mQsilUw4BbiITci7mITnRo6tu4V1O8dYDDl4jXd2YsbP9y+v9BH2szx5J3UgUgOYtocFu+98PpUsMDs4LC3OQGZmfGXj031Bl1AzYd3it922mz0EcghdfE1L36QJEdkByWNAgOwHVLnPC0CJnB3zn3MJ2U+FPh/QeZe4t2HgA0PJ/SCSkw++/kmiZu6D3lfybaDmO6RHjF6YvEzGtF3uHKYvh9jDmqMph18++SMIC8gotF14DyWP9axwVWVknotO+YYKKlg/MUi1tgxSFj4EGAHCLgFYSerq76x5FHX3yERqtcFCu/rJtuYS9hFJQ12KNm66VjQgbpWQU3NwBYOqP+zfFiYEsxb4tqnbeGmBW7V6xw/+aoekP6MCkxQs=
+  app: ea-angular-stub
+  on:
+    repo: EAndreyF/angular-stub

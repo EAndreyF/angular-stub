@@ -1,5 +1,7 @@
 ## Base project for angular
 
+[![Build Status](https://travis-ci.org/EAndreyF/angular-stub.svg?branch=master)](https://travis-ci.org/EAndreyF/angular-stub)
+
 ### Install
 - `npm i`
 - `bower i`
