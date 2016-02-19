@@ -84,8 +84,9 @@ module.exports = function (config) {
   };
 
 
-  if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'continuous') {
-    conf.singleRun = true;
+  if (process.env.NODE_TEST === 'debug') {
+    conf.singleRun = false;
+    conf.browsers = ['Chrome'];
   }
 
   config.set(conf);
