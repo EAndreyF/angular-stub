@@ -1,6 +1,7 @@
 ## Base project for angular
 
 [![Build Status](https://travis-ci.org/EAndreyF/angular-stub.svg?branch=master)](https://travis-ci.org/EAndreyF/angular-stub)
+[![Heroku](https://heroku-badge.herokuapp.com/?app=ea-angular-stub)](http://ea-angular-stub.herokuapp.com/)
 
 ### Install
 - `npm i`
