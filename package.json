@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "./node_modules/.bin/gulp clean && ./node_modules/.bin/gulp",
-    "prod": "node serve"
+    "prod": "node serve",
+    "test": "./node_modules/.bin/karma start"
   },
   "author": "Andrey Evstropov",
   "dependencies": {
@@ -25,5 +26,17 @@
   },
   "engines": {
     "node": ">=0.10.3 <5.0"
+  },
+  "devDependencies": {
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.21",
+    "karma-angular-filesort": "^1.0.1",
+    "karma-bower": "^1.0.1",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-firefox-launcher": "^0.1.7",
+    "karma-jasmine": "^0.3.7",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "karma-story-reporter": "^0.3.1",
+    "phantomjs-prebuilt": "^2.1.4"
   }
 }
