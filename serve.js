@@ -9,6 +9,7 @@ server.listen(config.get('frontPort'), function () {
     console.log('Example app listening at http://localhost:%s', port);
 });
 
+app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 app.use(express.static(path.join(__dirname, '.tmp')));
 
 module.exports = app;

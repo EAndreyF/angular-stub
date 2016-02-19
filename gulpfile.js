@@ -90,8 +90,8 @@ gulp.task('css compile', function () {
 
 // Insert all css files
 gulp.task('inject files', ['css compile', 'create template cache'], function () {
-  // change this rule, for production version include min.css
-  gulp.src(path.join(dest, 'html/index.html'))
+  return gulp.src(path.join(dest, 'html/index.html'))
+    .pipe(gulp.dest(dest))
     .pipe(inject(
       gulp.src([path.join(dest, 'css', '**/*.css')], {read: false}),
       {
@@ -107,10 +107,8 @@ gulp.task('inject files', ['css compile', 'create template cache'], function () 
         name: 'angular'
       }))
     .pipe(inject(
-      gulp.src(bowerLib.ext(['js', 'css', 'eot', 'woff', 'ttf', 'svg']).files)
-        .pipe(gulp.dest(path.join(dest, 'bower'))),
+      gulp.src(bowerLib.ext(['js', 'css']).files),
       {
-        relative: true,
         name: 'bower'
       }))
     .pipe(inject(
@@ -143,17 +141,6 @@ gulp.task('copy js', function () {
 
 gulp.task('build', ['copy img', 'copy fonts', 'copy js', 'inject files']);
 
-// local server
-gulp.task('serve', ['build'], function () {
-  connect.server({
-    root: dest,
-    port: 8003,
-    livereload: false
-  });
-
-  console.log('Server listening on http://localhost:8003');
-});
-
 gulp.task('watch', ['build'], function () {
   var w = path.joinArray(src, '**/*');
   w.push('./bower.json');
@@ -163,5 +150,5 @@ gulp.task('watch', ['build'], function () {
   });
 });
 
-gulp.task('default', ['serve', 'watch']);
+gulp.task('default', ['watch']);
 

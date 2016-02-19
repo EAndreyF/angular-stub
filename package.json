@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "./node_modules/.bin/gulp clean && ./node_modules/.bin/gulp",
+    "dev": "./node_modules/.bin/gulp & node serve",
     "prod": "./node_modules/.bin/gulp build && node serve",
     "test": "./node_modules/.bin/karma start",
     "test_debug": "NODE_TEST=debug npm test",
