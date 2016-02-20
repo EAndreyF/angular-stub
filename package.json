@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "./node_modules/.bin/gulp & node serve",
-    "prod": "./node_modules/.bin/gulp build && node serve",
-    "test": "./node_modules/.bin/karma start",
-    "test_debug": "NODE_TEST=debug npm test",
+    "dev": "gulp dev",
+    "prod": "gulp prod",
+    "test": "karma start",
+    "test-e2e": "gulp e2e",
+    "test-debug": "NODE_TEST=debug npm test",
     "postinstall": "bower i"
   },
   "author": "Andrey Evstropov",
@@ -22,9 +23,12 @@
     "gulp-concat": "^2.6.0",
     "gulp-connect": "^2.2.0",
     "gulp-inject": "^3.0.0",
+    "gulp-protractor": "^2.1.0",
+    "gulp-shell": "^0.5.2",
     "gulp-slim": "^0.3.0",
     "gulp-stylus": "^2.1.0",
-    "gulp-watch": "^4.3.5"
+    "gulp-watch": "^4.3.5",
+    "run-sequence": "^1.1.5"
   },
   "engines": {
     "node": "5.6.0",
@@ -40,6 +44,7 @@
     "karma-jasmine": "^0.3.7",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-story-reporter": "^0.3.1",
-    "phantomjs-prebuilt": "^2.1.4"
+    "phantomjs-prebuilt": "^2.1.4",
+    "protractor": "^3.1.1"
   }
 }

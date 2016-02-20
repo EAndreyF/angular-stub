@@ -11,6 +11,9 @@ var watch = require('gulp-watch');
 var connect = require('gulp-connect');
 var templateCache = require('gulp-angular-templatecache');
 var path = require('path');
+var protractor = require("gulp-protractor").protractor;
+var shell = require("gulp-shell");
+var runSequence = require('run-sequence');
 
 path._joinArrayToArray = function (arr, arr2) {
   var res = [];
@@ -46,11 +49,12 @@ var dest = './.tmp';
 
 var paths = {
   css: ['./app.styl'],
-  js: ['./**/*.js', '!./**/*.test.js'],
+  js: ['./**/*.js', '!./**/*.test.js', '!./**/*.e2e.js'],
   templates: ['./**/*.slim'], // need to installed slim
   vendors: ['./vendors/*'],
   img: ['./**/*.{png,jpg,gif,svg}'],
-  fonts: ['./fonts/*']
+  fonts: ['./fonts/*'],
+  e2e: ['./**/*.e2e.js']
 };
 
 var swallowError = function (error) {
@@ -150,5 +154,26 @@ gulp.task('watch', ['build'], function () {
   });
 });
 
-gulp.task('default', ['watch']);
+var verbose = true;
+
+gulp.task('serve-start', shell.task('node serve', {verbose: verbose}));
+
+gulp.task('serve-start-async', function () {
+  runSequence('serve-start');
+});
+
+gulp.task('serve', ['serve-start']);
+
+gulp.task('run-protractor', shell.task('protractor protractor.conf.js', {verbose: verbose}));
+
+gulp.task('e2e', ['build', 'serve-start-async', 'run-protractor'], function () {
+  console.log('test finish successful');
+  process.exit(0);
+});
+
+gulp.task('dev', ['watch', 'serve-start-async']);
+
+gulp.task('prod', ['build', 'serve-start']);
+
+gulp.task('default', ['dev']);
 
