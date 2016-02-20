@@ -1,3 +1,4 @@
 module.exports = {
-    frontPort: 8003
+  host: 'http://localhost:8003',
+  frontPort: 8003
 };

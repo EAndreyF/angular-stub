@@ -1,17 +1,21 @@
-describe('angularjs homepage todo list', function() {
-  it('should add a todo', function() {
-    browser.get('https://angularjs.org');
+var config = require('config');
+var page = config.get('host');
 
-    element(by.model('todoList.todoText')).sendKeys('write first protractor test');
-    element(by.css('[value="add"]')).click();
+console.log(page);
 
-    var todoList = element.all(by.repeater('todo in todoList.todos'));
-    expect(todoList.count()).toEqual(3);
-    expect(todoList.get(2).getText()).toEqual('write first protractor test');
+describe('angular-stub page', function() {
+  beforeEach(function () {
+    browser.get(page);
+  });
 
-    // You wrote your first test, cross it off the list
-    todoList.get(2).element(by.css('input')).click();
-    var completedAmount = element.all(by.css('.done-true'));
-    expect(completedAmount.count()).toEqual(2);
+  it('shouldn\'t be empty', function() {
+    var completedAmount = element.all(by.css('.cst-tooltips'));
+    expect(completedAmount.count()).toEqual(1);
+  });
+
+  it('tooltip should appear after click on first cell', function () {
+    element.all(by.css('.table-cell')).get(2).click();
+    var completedAmount = element.all(by.css('.cst-tooltip'));
+    expect(completedAmount.count()).toEqual(1);
   });
 });
