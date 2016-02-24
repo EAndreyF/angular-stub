@@ -45,6 +45,7 @@ path.joinArray = function () {
 
 var src = './frontend';
 var dest = './.tmp';
+var release = './build';
 
 var paths = {
   css: ['./app.styl'],
@@ -168,7 +169,12 @@ gulp.task('e2e', ['build', 'serve-start', 'serve-end']);
 
 gulp.task('dev', ['watch', 'serve-start']);
 
-gulp.task('prod', ['build', 'serve-start']);
+gulp.task('prod', ['serve-start']);
+
+gulp.task('release', ['build'], function () {
+  return gulp.src(path.join(dest, '**/*'))
+    .pipe(gulp.dest(release))
+});
 
 gulp.task('default', ['dev']);
 

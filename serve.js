@@ -11,7 +11,7 @@ var deferred = new Promise(function (resolve, reject) {
   });
 
   app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
-  app.use(express.static(path.join(__dirname, '.tmp')));
+  app.use(express.static(path.join(__dirname, config.get('dir'))));
 });
 
 module.exports = deferred;
