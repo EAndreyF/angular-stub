@@ -13,6 +13,7 @@ var templateCache = require('gulp-angular-templatecache');
 var path = require('path');
 var protractor = require("gulp-protractor").protractor;
 var shell = require("gulp-shell");
+var seq = require('run-sequence');
 
 path._joinArrayToArray = function (arr, arr2) {
   var res = [];
@@ -44,14 +45,19 @@ path.joinArray = function () {
 };
 
 var src = './frontend';
-var dest = './.tmp';
+var dest = './build';
+var tmp = './.tmp';
+
+var templates = {
+  fonts: ['eot', 'woff', 'ttf', 'svg'],
+  img: ['png', 'jpg', 'gif', 'svg']
+};
 
 var paths = {
   css: ['./app.styl'],
   js: ['./**/*.js', '!./**/*.test.js', '!./**/*.e2e.js'],
   templates: ['./**/*.slim'], // need to installed slim
-  vendors: ['./vendors/*'],
-  img: ['./**/*.{png,jpg,gif,svg}'],
+  img: ['./**/*.{' + templates.img.join(',') + '}'],
   fonts: ['./fonts/*'],
   e2e: ['./**/*.e2e.js']
 };
@@ -66,6 +72,25 @@ gulp.task('clean', function () {
   return del(path.join(dest, '**/*'));
 });
 
+gulp.task('bower js', function () {
+  return gulp.src(bowerLib.ext('js').files)
+    .pipe(concat('bower.js'))
+    .pipe(gulp.dest(path.join(tmp, 'bower')));
+});
+
+gulp.task('bower css', function () {
+  return gulp.src(bowerLib.ext('css').files)
+    .pipe(concat('bower.css'))
+    .pipe(gulp.dest(path.join(tmp, 'bower')));
+});
+
+gulp.task('bower fonts', function () {
+  return gulp.src(bowerLib.ext(templates.fonts).files)
+    .pipe(gulp.dest(path.join(dest, 'bower')));
+});
+
+gulp.task('bower', ['bower js', 'bower css', 'bower fonts']);
+
 // Compile all template files
 gulp.task('slim template compile', function () {
   return gulp.src(path.joinArray(src, paths.templates))
@@ -74,54 +99,41 @@ gulp.task('slim template compile', function () {
       options: "attr_list_delims={'(' => ')', '[' => ']'}"
     }))
     .on('error', swallowError)
-    .pipe(gulp.dest(path.join(dest, 'html')));
+    .pipe(gulp.dest(path.join(tmp, 'html')))
 });
 
 gulp.task('create template cache', ['slim template compile'], function () {
-  return gulp.src(path.join(dest, 'html/**/*.html'))
+  return gulp.src(path.join(tmp, 'html/**/*.html'))
     .pipe(templateCache('templates.js', {standalone: true}))
-    .pipe(gulp.dest(path.join(dest, 'js')));
+    .pipe(gulp.dest(path.join(tmp, 'js')));
 });
 
 // Compile all css files
-gulp.task('css compile', function () {
+gulp.task('compile css app', function () {
   return gulp.src(path.joinArray(src, paths.css))
     .pipe(stylus())
-    .pipe(gulp.dest(path.join(dest, 'css')))
+    .pipe(gulp.dest(path.join(tmp, 'css')))
     .on('error', swallowError);
 });
 
-// Insert all css files
-gulp.task('inject files', ['css compile', 'create template cache'], function () {
-  return gulp.src(path.join(dest, 'html/index.html'))
-    .pipe(gulp.dest(dest))
-    .pipe(inject(
-      gulp.src([path.join(dest, 'css', '**/*.css')], {read: false}),
-      {
-        relative: true,
-        name: 'css'
-      }))
-    .pipe(inject(
-      gulp.src(path.joinArray(dest, 'js', paths.js)) // gulp-angular-filesort depends on file contents, so don't use {read: false} here
-        .pipe(angularFilesort())
-        .on('error', swallowError),
-      {
-        relative: true,
-        name: 'angular'
-      }))
-    .pipe(inject(
-      gulp.src(bowerLib.ext(['js', 'css']).files),
-      {
-        name: 'bower'
-      }))
-    .pipe(inject(
-      gulp.src(path.joinArray(src, paths.vendors))
-        .pipe(gulp.dest(path.join(dest, 'vendors'))),
-      {
-        relative: true,
-        name: 'vendors'
-      }))
-    .pipe(gulp.dest(dest));
+gulp.task('compile css', ['compile css app', 'bower'], function () {
+  return gulp.src([
+    path.join(tmp, 'bower/*.css'),
+    path.join(tmp, 'css/*.css')
+  ])
+    .pipe(concat('main.css'))
+    .pipe(gulp.dest(path.join(dest, 'css')));
+});
+
+// copy js files
+gulp.task('compile js', ['create template cache'], function () {
+  var files = path.joinArray(src, paths.js);
+  files.push(path.join(tmp, 'js/*.js'));
+  files.push(path.join(tmp, 'bower/*.js'));
+  return gulp.src(files)
+    .pipe(angularFilesort())
+    .pipe(concat('main.js'))
+    .pipe(gulp.dest(path.join(dest, 'js')));
 });
 
 // copy img files
@@ -136,13 +148,28 @@ gulp.task('copy fonts', function () {
     .pipe(gulp.dest(path.join(dest, 'fonts')))
 });
 
-// copy js files
-gulp.task('copy js', function () {
-  return gulp.src(path.joinArray(src, paths.js))
-    .pipe(gulp.dest(path.join(dest, 'js')))
+// Insert all css files
+gulp.task('inject files', ['compile js', 'compile css', 'create template cache', 'bower'], function () {
+  return gulp.src(path.join(tmp, 'html/index.html'))
+    .pipe(gulp.dest(dest))
+    .pipe(inject(
+      gulp.src([path.join(dest, 'css', '**/*.css')], {read: false}),
+      {
+        relative: true,
+        name: 'css'
+      }))
+    .pipe(inject(
+      gulp.src(path.join(dest, 'js/*')),
+      {
+        relative: true,
+        name: 'angular'
+      }))
+    .pipe(gulp.dest(dest));
 });
 
-gulp.task('build', ['copy img', 'copy fonts', 'copy js', 'inject files']);
+gulp.task('build', function (done) {
+  seq('clean', ['copy img', 'copy fonts', 'inject files'], done);
+});
 
 gulp.task('watch', ['build'], function () {
   var w = path.joinArray(src, '**/*');
@@ -155,10 +182,12 @@ gulp.task('watch', ['build'], function () {
 
 gulp.task('serve-start', function (done) {
   var server = require('./serve');
-  server.then(function(app) { done(); });
+  server.then(function () {
+    done();
+  });
 });
 
-gulp.task('serve-end', ['run-protractor'], function (done) {
+gulp.task('serve-end', ['run-protractor'], function () {
   process.exit();
 });
 
@@ -168,7 +197,7 @@ gulp.task('e2e', ['build', 'serve-start', 'serve-end']);
 
 gulp.task('dev', ['watch', 'serve-start']);
 
-gulp.task('prod', ['build', 'serve-start']);
+gulp.task('prod', ['serve-start']);
 
 gulp.task('default', ['dev']);
 
